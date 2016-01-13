@@ -141,7 +141,9 @@ class chaseYouku :
 		return result
 
 	def __yk_e (self, a, c) : 
-		f = i = h =0
+		f = 0
+		i = 0
+		h = 0
 		b = {}
 		e = ''
 		for h in xrange(0, 256) :
