@@ -138,7 +138,7 @@ class chaseYouku :
 		for x in listContent:
 			if x not in result :
 				result.append(x)
-		print result
+		return result
 
 	def __yk_e (self, a, c) : 
 		f = i = h =0
