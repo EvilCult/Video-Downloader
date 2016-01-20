@@ -4,7 +4,7 @@ import re
 import json
 import sys
 sys.path.append("..")
-from Lib import toolClass
+from Library import toolClass
 
 class ChaseSohu :
 
