@@ -103,8 +103,11 @@ class Tools :
 		if y >= base :
 			y = y % base
 		for i in xrange (0, y) :
-			x = x[0] + x + '0'
-		if w == 'r' :
+			if w != 'r+' :
+				x = x[0] + x + '0'
+			else :
+				x = '0' + x + '0'				
+		if w == 'r' or w == 'r+' :
 			x = x[0 : base]
 		else :	
 			x = x[(len(x) - base) : ]
