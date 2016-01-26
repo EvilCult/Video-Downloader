@@ -13,7 +13,7 @@ class ChaseLetv :
 
 	def __init__ (self) :
 		self.videoLink     = ''
-		self.fileUrlPrefix = 'http://api.letv.com/mms/out/video/playJson?platid=1&splatid=101&domain=www.letv.com'
+		self.fileUrlPrefix = 'http://api.letv.com/mms/out/video/playJson?platid=1&splatid=104&tss=no&domain=www.letv.com'
 		self.urlSuffix     = '&start=0&end=10000000000&'
 		self.videoTypeList = {'n': '1000', 'h': '1300', 's': '720p'}
 		self.videoType     = 's'
@@ -28,13 +28,13 @@ class ChaseLetv :
 			confgFileUrl = self.fileUrlPrefix + '&id=' + str(videoID) + '&tkey=' + str(tkey)
 			fileUrl = self.__getVideoFileUrl(confgFileUrl)
 			if fileUrl != False :
-				listFile = self.__getFileList(fileUrl)
-				# if len(listFile) > 0:
-				# 	result['msg'] = listFile
-				# else:
-				# 	result['stat'] = 1
-			# else :
-			# 	result['stat'] = 1
+				fileUrl = self.__getFile(fileUrl)
+				if fileUrl != '' > 0:
+					result['msg'] = fileUrl
+				else:
+					result['stat'] = 1
+			else :
+				result['stat'] = 1
 		else :
 			result['stat'] = 2
 
@@ -61,25 +61,24 @@ class ChaseLetv :
 	def __getVideoFileUrl (self, confgFileUrl) :
 		pageHeader, pageBody = self.Tools.getPage(confgFileUrl)
 		info = json.JSONDecoder().decode(pageBody)
-		url = str(info['playurl']['domain'][0]) + str(info['playurl']['dispatch'][self.videoTypeList[self.videoType]][0]) + '&format=1&sign=letv&expect=3000&rateid=' + self.videoTypeList[self.videoType]
+		# url = str(info['playurl']['domain'][0]) + str(info['playurl']['dispatch'][self.videoTypeList[self.videoType]][0]) + '&format=1&sign=letv&expect=3000&rateid=' + self.videoTypeList[self.videoType]
+		url = str(info['playurl']['domain'][0]) + str(info['playurl']['dispatch'][self.videoTypeList[self.videoType]][0])
+		url = url.replace('tss=ios', 'tss=no')
+		url = url.replace('splatid=101', 'splatid=104')
 
 		return url
 
-	def __getFileList (self, fileUrl) :
+	def __getFile (self, fileUrl) :
 		pageHeader, pageBody = self.Tools.getPage(fileUrl)
-		info = json.JSONDecoder().decode(pageBody)
-		# if pageHeader[0] == 'HTTP/1.1 302 Moved' :
-		# 	url = ''
-		# 	for x in pageHeader :
-		# 		if x[:10] == 'Location: ' :
-		# 			url = x[10:]
-		# 			break
-		# 	pageHeader, pageBody = self.Tools.getPage(url)
 
-		pageHeader, pageBody = self.Tools.getPage(info['location'])
-		return pageBody
+		url = ''
+		if pageHeader[0] == 'HTTP/1.1 302 Moved' :
+			for x in pageHeader :
+				if x[:10] == 'Location: ' :
+					url = x[10:]
+					break
 
-		# return data
+		return url
 
 	def  __formatList (self, data) :
 		result = []

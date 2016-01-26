@@ -26,6 +26,6 @@ from Module import letvClass
 
 # e.g. letv
 obj = letvClass.ChaseLetv();
-obj.videoLink = 'http://www.letv.com/ptv/vplay/24424028.html'
+obj.videoLink = 'http://www.letv.com/ptv/vplay/24469923.html'
 url = obj.chaseUrl()
 print url
