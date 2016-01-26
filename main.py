@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import guiClass
 from Module import youkuClass
 from Module import tudouClass
 from Module import sohuClass
@@ -25,7 +26,10 @@ from Module import letvClass
 # print url
 
 # e.g. letv
-obj = letvClass.ChaseLetv();
-obj.videoLink = 'http://www.letv.com/ptv/vplay/24469923.html'
-url = obj.chaseUrl()
-print url
+# obj = letvClass.ChaseLetv();
+# obj.videoLink = 'http://sports.letv.com/video/24447570.html'
+# url = obj.chaseUrl()
+# print url
+
+app = guiClass.GUI()
+app.run()
