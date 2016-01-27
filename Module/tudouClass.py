@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import re
-import sys
-sys.path.append("..")
 from Library import toolClass
 
 class ChaseTudou :

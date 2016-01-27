@@ -5,8 +5,6 @@ import json
 import random
 import math
 import time
-import sys
-sys.path.append("..")
 from Library import toolClass
 
 class ChaseLetv :

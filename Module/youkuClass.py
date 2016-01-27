@@ -5,8 +5,6 @@ import hashlib
 import base64
 import urllib
 import re
-import sys
-sys.path.append("..")
 from Library import toolClass
 
 class ChaseYouku :
