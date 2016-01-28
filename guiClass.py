@@ -5,10 +5,10 @@ import ttk
 import tkMessageBox
 import os
 import sys
-import youkuClass
-import tudouClass
-import sohuClass
-import letvClass
+from Module import youkuClass
+from Module import tudouClass
+from Module import sohuClass
+from Module import letvClass
 
 class GUI :
 
