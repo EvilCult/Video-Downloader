@@ -14,7 +14,7 @@ class GUI :
 
 	def __init__ (self) :
 		self.masterTitle = 'Video Downloader'
-		self.slaveTitle = 'Setting'
+		self.slaveTitle = 'Info'
 
 	def __mainWindow (self) :
 		self.master = Tkinter.Tk();
@@ -29,9 +29,9 @@ class GUI :
 		menubar = Tkinter.Menu(self.master)
 
 		filemenu = Tkinter.Menu(menubar, tearoff = 0)
-		filemenu.add_command(label = "设置", command = '')
-		filemenu.add_command(label = "退出程序", command = self.master.quit)
-		menubar.add_cascade(label = "Setting", menu = filemenu)
+		filemenu.add_command(label = "Info", command = self.__showInfo)
+		filemenu.add_command(label = "Quit", command = self.master.quit)
+		menubar.add_cascade(label = "About", menu = filemenu)
 
 		self.master.config(menu = menubar)
 
@@ -67,8 +67,8 @@ class GUI :
 
 		self.__getUrl()
 
-		b = Tkinter.Button(mainFoot, text = '下载', command = '')
-		b.grid(row = 1, column = 0, sticky = 'ew')
+		# b = Tkinter.Button(mainFoot, text = '下载', command = '')
+		# b.grid(row = 1, column = 0, sticky = 'ew')
 
 	def __getUrl (self):
 		self.resultWindow.delete('1.0', 'end')
@@ -116,6 +116,28 @@ class GUI :
 
 		
 		self.resultWindow.insert('end', result)
+
+	def __showInfo(self):
+		self.slave = Tkinter.Tk();
+
+		self.slave.title(self.slaveTitle)
+		self.slave.resizable(width = 'false', height = 'false')
+
+		info = [
+			'Virsion:Beta 0.9.0',
+			'Support:www.youku.com\rwww.tudou.com\rtv.sohu.com\rwww.letv.com',
+			'Author:Ray H.'
+		]
+
+		label = Tkinter.Label(self.slave, width = 30, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
+		label.grid(row = 0)
+		i = 1
+		for n in info :
+			label = Tkinter.Label(self.slave, width = 30, text = n.split(':')[0], font = ("Helvetica", "14", 'bold'), anchor = 'center')
+			label.grid(row = i)
+			label = Tkinter.Label(self.slave, width = 30, text = n.split(':')[1], font = ("Helvetica", "12"), anchor = 'center')
+			label.grid(row = (i + 1))
+			i += 2
 
 	def run (self) :
 		self.__mainWindow()
