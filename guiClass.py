@@ -124,18 +124,19 @@ class GUI :
 		self.slave.resizable(width = 'false', height = 'false')
 
 		info = [
-			'Virsion:Beta 0.9.0',
-			'Support:www.youku.com\rwww.tudou.com\rtv.sohu.com\rwww.letv.com',
-			'Author:Ray H.'
+			'Virsion: Beta 0.9.0',
+			'Support: www.youku.com\rwww.tudou.com\rtv.sohu.com\rwww.letv.com',
+			'Website: https://github.com/EvilCult/Video-Downloader',
+			'Author: Ray H.'
 		]
 
-		label = Tkinter.Label(self.slave, width = 30, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
+		label = Tkinter.Label(self.slave, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
 		label.grid(row = 0)
 		i = 1
 		for n in info :
-			label = Tkinter.Label(self.slave, width = 30, text = n.split(':')[0], font = ("Helvetica", "14", 'bold'), anchor = 'center')
+			label = Tkinter.Label(self.slave, text = n.split(': ')[0], font = ("Helvetica", "14", 'bold'), anchor = 'center')
 			label.grid(row = i)
-			label = Tkinter.Label(self.slave, width = 30, text = n.split(':')[1], font = ("Helvetica", "12"), anchor = 'center')
+			label = Tkinter.Label(self.slave, text = n.split(': ')[1], font = ("Helvetica", "12"), anchor = 'center')
 			label.grid(row = (i + 1))
 			i += 2
 
