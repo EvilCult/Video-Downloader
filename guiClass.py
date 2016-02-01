@@ -5,6 +5,7 @@ import ttk
 import tkMessageBox
 import os
 import sys
+import threading
 from Module import youkuClass
 from Module import tudouClass
 from Module import sohuClass
@@ -45,8 +46,8 @@ class GUI :
 		s = self.__selector(self.mainTop)
 		s.grid(row = 0, column = 1)
 
-		b = Tkinter.Button(self.mainTop, text = '搜索', command = self.__showResult)
-		b.grid(row = 0, column = 2)
+		self.__searchBtn()
+
 
 	def __selector (self, position) :
 		self.selectorVal = Tkinter.StringVar()
@@ -59,20 +60,17 @@ class GUI :
 		return s	
 
 	def __showResult (self) :
-		mainFoot = Tkinter.Frame(self.master, bd = 10)
-		mainFoot.grid(row = 1, column = 0, sticky = '')		
+		self.mainFoot = Tkinter.Frame(self.master, bd = 10)
+		self.mainFoot.grid(row = 1, column = 0, sticky = '')		
 
-		self.resultWindow = Tkinter.Text(mainFoot, height = 5, width = 70, highlightthickness = 0)
-		self.resultWindow.grid(row = 0, sticky = '')
+		self.__searchBtn(False)
 
-		self.__getUrl()
+		threading.Thread(target = self.__getUrl).start()
 
 		# b = Tkinter.Button(mainFoot, text = '下载', command = '')
 		# b.grid(row = 1, column = 0, sticky = 'ew')
 
 	def __getUrl (self):
-		self.resultWindow.delete('1.0', 'end')
-
 		url = self.urlInput.get()
 		result = True
 		if 'youku' in url :
@@ -115,7 +113,21 @@ class GUI :
 			result = '链接地址不再分析范围内！'
 
 		
+		self.resultWindow = Tkinter.Text(self.mainFoot, height = 5, width = 70, highlightthickness = 0)
+		self.resultWindow.grid(row = 0, sticky = '')
 		self.resultWindow.insert('end', result)
+
+		self.__searchBtn()
+
+
+	def __searchBtn (self, stat = True) :
+		if stat :
+			b = Tkinter.Button(self.mainTop, text = '搜索', command = self.__showResult)
+			b.grid(row = 0, column = 2)
+		else :
+			b = Tkinter.Button(self.mainTop, text = '稍等', command = '')
+			b.grid(row = 0, column = 2)
+
 
 	def __showInfo(self):
 		self.slave = Tkinter.Tk();
