@@ -10,12 +10,14 @@ from Module import youkuClass
 from Module import tudouClass
 from Module import sohuClass
 from Module import letvClass
+from Library import fileProcesserClass
 
 class GUI :
 
 	def __init__ (self) :
 		self.masterTitle = 'Video Downloader'
 		self.slaveTitle = 'Info'
+		self.fileList = []
 
 	def __mainWindow (self) :
 		self.master = Tkinter.Tk();
@@ -64,11 +66,15 @@ class GUI :
 		self.mainFoot.grid(row = 1, column = 0, sticky = '')		
 
 		self.__searchBtn(False)
+		self.resultWindow = Tkinter.Text(self.mainFoot, height = 5, width = 70, highlightthickness = 0)
+		self.resultWindow.grid(row = 0, sticky = '')
 
 		threading.Thread(target = self.__getUrl).start()
 
-		# b = Tkinter.Button(mainFoot, text = '下载', command = '')
-		# b.grid(row = 1, column = 0, sticky = 'ew')
+		self.dlZone = Tkinter.Button(self.mainFoot, text = '下载', command = self.__download)
+		self.dlZone.grid(row = 1, column = 0, sticky = 'ew')
+
+		self.mainFoot.update()
 
 	def __getUrl (self):
 		url = self.urlInput.get()
@@ -102,6 +108,7 @@ class GUI :
 			urlList = getClass.chaseUrl()
 
 			if urlList['stat'] == 0 :
+				self.fileList = urlList['msg']
 				i = 1
 				for x in urlList['msg']:
 					result += '第' + str(i) + '段:\n' + str(x) + '\n'
@@ -112,13 +119,25 @@ class GUI :
 		else :
 			result = '链接地址不再分析范围内！'
 
-		
-		self.resultWindow = Tkinter.Text(self.mainFoot, height = 5, width = 70, highlightthickness = 0)
-		self.resultWindow.grid(row = 0, sticky = '')
 		self.resultWindow.insert('end', result)
 
 		self.__searchBtn()
 
+	def __download (self) :
+		self.FPC = fileProcesserClass.FileProcesser()
+		if len(self.fileList) > 0 :
+			self.dlZone.grid_forget()
+			self.dlStat = Tkinter.StringVar()
+			self.dlZone = Tkinter.Label(self.mainFoot, textvariable = self.dlStat, width = 30, anchor = 'center')
+			self.dlZone.grid(row = 1, column = 0, sticky = 'ew')
+
+			self.FPC.download(self.fileList)
+			self.__dlZoneUpdate()
+
+	def __dlZoneUpdate (self) :
+		self.dlStat.set(self.FPC.process)
+
+		self.timer = self.master.after(1000, self.__dlZoneUpdate)
 
 	def __searchBtn (self, stat = True) :
 		if stat :
