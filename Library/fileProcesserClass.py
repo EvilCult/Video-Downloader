@@ -30,13 +30,13 @@ class FileProcesser :
 				if x[0:12] == 'Content-Type' :
 					cType = x[14:]
 					break
-			if cType == 'video/x-flv' :
-				fileType = '.flv'
-			elif cType == 'video/mp4':
-				fileType = '.mp4'
+			if 'flv' in cType :
+				self.fileType = '.flv'
+			elif 'mp4' in cType:
+				self.fileType = '.mp4'
 			else :
-				fileType = '.mp4'				
-			urllib.urlretrieve(url, self.savePath + '/' + self.saveName + '_' + str(self.fileID) + fileType, reporthook = self.__report)
+				self.fileType = '.mp4'		
+			urllib.urlretrieve(url, self.savePath + '/' + self.saveName + '_' + str(self.fileID) + self.fileType, reporthook = self.__report)
 			self.fileID += 1
 		self.process = '下载完成'
 

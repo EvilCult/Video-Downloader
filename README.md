@@ -14,9 +14,13 @@ PS：
 PS：
 优酷部分代码（function：__yk_e）参考自Youku m3u8 parser - lcz970（https://github.com/lcz970/Youku-m3u8-php）
 
+## 2.03.2016 更新
+添加了个下载功能，抓取到原视频链接后，可以一键下载所有视频，暂存到桌面Video－Downloader文件夹中。
+不过视频合并。。。就是个问题了。。。。并不是很感兴趣啊。。。
+更新Win的exe&Mac的app。
 
 ## 1.29.2016 更新
-打了 Windows & OS X 的包， 放个。下载地址
+打了 Windows & OS X 的包， 丢在百度云上，放个下载地址。
 
 
 ## 1.27.2016 更新

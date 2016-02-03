@@ -141,11 +141,11 @@ class GUI :
 
 	def __searchBtn (self, stat = True) :
 		if stat :
-			b = Tkinter.Button(self.mainTop, text = '搜索', command = self.__showResult)
-			b.grid(row = 0, column = 2)
+			self.sBtn = Tkinter.Button(self.mainTop, text = '搜索', width = 10, command = self.__showResult)
+			self.sBtn.grid(row = 0, column = 2)
 		else :
-			b = Tkinter.Button(self.mainTop, text = '稍等', command = '')
-			b.grid(row = 0, column = 2)
+			self.sBtn = Tkinter.Button(self.mainTop, text = '分析中...', width = 10, command = '')
+			self.sBtn.grid(row = 0, column = 2)
 
 
 	def __showInfo(self):
