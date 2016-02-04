@@ -100,4 +100,4 @@ class ChaseLetv :
 			a = self.Tools.rotate(a, 1, 'r+') + self.Tools.rotate((a & 1), 31, 'l');
 			i += 1
 
-		return a;
+		return a

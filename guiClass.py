@@ -10,6 +10,8 @@ from Module import youkuClass
 from Module import tudouClass
 from Module import sohuClass
 from Module import letvClass
+from Module import bilibiliClass
+from Module import acfunClass
 from Library import fileProcesserClass
 
 class GUI :
@@ -87,6 +89,10 @@ class GUI :
 			getClass = letvClass.ChaseLetv()
 		elif 'tudou' in url :
 			getClass = tudouClass.ChaseTudou()
+		elif 'bilibili' in url :
+			getClass = bilibiliClass.ChaseBilibili()
+		elif 'acfun' in url :
+			getClass = acfunClass.ChaseAcfun()
 		else :
 			result = False
 

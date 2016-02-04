@@ -7,14 +7,14 @@ import urllib
 import re
 from Library import toolClass
 
-class ChaseYouku :
+class ChaseAcfun :
 
 	def __init__ (self) :
 		self.videoLink     = ''
-		self.cookieUrl     = 'http://p.l.youku.com/ypvlog'
-		self.infoUrl       = 'http://play.youku.com/play/get.json?ct=12&vid='
+		self.infoUrl       = 'http://api.aixifan.com/plays/'
+		self.infoUrlSuffix = '/realSource'
 		self.fileUrlPrefix = 'http://pl.youku.com/playlist/m3u8?ctype=12&ev=1&keyframe=1'
-		self.videoTypeList = {'n': 'flv', 'h': 'mp4', 's': 'hd2'}
+		self.videoTypeList = {'n': '', 'h': '', 's': ''}
 		self.videoType     = 's'
 		self.tempCookie    = ''
 		self.Tools         = toolClass.Tools()
@@ -23,12 +23,11 @@ class ChaseYouku :
 		result = {'stat': 0, 'msg': ''}
 		videoID = self.__getVideoID(self.videoLink)
 		if videoID :
-			self.__auth()
 			info = self.__getVideoInfo(videoID)
 			fileUrl = self.__getVideoFileUrl(info)
-			listFile = self.__getFileList(fileUrl)
-			if len(listFile) > 0:
-				result['msg'] = listFile
+			fileList = self.__getFile(fileUrl)
+			if len(fileList) > 0:
+				result['msg'] = fileList
 			else:
 				result['stat'] = 1
 		else :
@@ -37,7 +36,9 @@ class ChaseYouku :
 		return result
 
 	def __getVideoID(self, link):
-		result = re.findall(r"id_(.*?==)", link)
+		pageHeader, pageBody = self.Tools.getPage(link)
+
+		result = re.findall(r"data-vid=\"(\d*)\"", pageBody)
 		if len(result) > 0 :
 			videoID = result[0]
 		else :
@@ -45,44 +46,49 @@ class ChaseYouku :
 
 		return videoID
 
-	def __auth (self) :
-		pageHeader, pageBody = self.Tools.getPage(self.cookieUrl)
-
-		self.tempCookie = 'Cookie: '
-		for i in pageHeader:
-			cookie = re.findall(r"Set-Cookie:(.*?;)\s*?domain", i)
-			if len(cookie) > 0 :
-				self.tempCookie += cookie[0].strip() + ' '
-
 	def __getVideoInfo (self, videoID) :
-		pageHeader, pageBody = self.Tools.getPage(self.infoUrl + videoID, ['Referer:http://c-h5.youku.com/', self.tempCookie])
+		pageHeader, pageBody = self.Tools.getPage(self.infoUrl + videoID + self.infoUrlSuffix, ['deviceType:2', 'User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 8_0 like Mac OS X) AppleWebKit/600.1.3 (KHTML, like Gecko) Version/8.0 Mobile/12A4345d Safari/600.1.4'])
 
 		return pageBody
 			
 	def __getVideoFileUrl (self, videoInfo) :
 		videoInfo = json.JSONDecoder().decode(videoInfo)
-		if 'security' in videoInfo['data']:
-			ep = videoInfo['data']['security']['encrypt_string']
+		if 'data' in videoInfo:
+			fileList = videoInfo['data']['files']
 		else :
-			ep = False
+			fileList = False
 
-		if ep :
-			oip   = videoInfo['data']['security']['ip']
-			vid   = videoInfo['data']['video']['encodeid']
-			temp  = self.__yk_e('becaf9be', base64.decodestring(ep))
-			sid   = temp.split('_')[0]
-			token = temp.split('_')[1]
-			ep    = urllib.quote(base64.encodestring(self.__yk_e('bf7e5f01', str(sid) + '_' + str(vid) + '_' + str(token))), '')[0:-3]
-			fileUrl = self.fileUrlPrefix + '&ep=' + str(ep) + '&oip=' + str(oip) + '&sid=' + str(sid) + '&token=' + str(token) + '&vid=' + str(vid) + '&type=' + self.videoTypeList[self.videoType]
+		if fileList :
+			fileUrl = False
+
+			if self.videoType == 's' :
+				fileCode = 4
+			elif self.videoType == 'h' :
+				fileCode = 3
+			elif self.videoType == 'n' :
+				fileCode = 2
+			else :
+				fileCode = 4
+
+			for item in fileList:
+				if item['code'] == fileCode :
+					fileUrl = item['url']
+					break
 		else :
 			fileUrl = False
 
 		return fileUrl
 
-	def __getFileList (self, fileUrl) :
-		pageHeader, pageBody = self.Tools.getPage(fileUrl, [self.tempCookie])
+	def __getFile (self, fileUrl) :
+		data = []
+		for url in fileUrl :
+			pageHeader, pageBody = self.Tools.getPage(url)
+			if 'HTTP/1.1 302' in pageHeader[0] :
+				for x in pageHeader :
+					if x[:10] == 'Location: ' :
+						data.append(x[10:])
+						break
 
-		data = self.__formatList(pageBody)
 		return data
 
 	def  __formatList (self, data):
