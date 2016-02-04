@@ -161,21 +161,23 @@ class GUI :
 		self.slave.resizable(width = 'false', height = 'false')
 
 		info = [
-			'Virsion: Beta 0.9.0',
-			'Support: www.youku.com\rwww.tudou.com\rtv.sohu.com\rwww.letv.com',
-			'Website: https://github.com/EvilCult/Video-Downloader',
-			'Author: Ray H.'
+			'Support: www.youku.com\nwww.tudou.com\ntv.sohu.com\nwww.letv.com\nwww.bilibili.com\nwww.acfun.tv',
+			'Website: https://github.com/EvilCult/Video-Downloader'
 		]
 
 		label = Tkinter.Label(self.slave, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
 		label.grid(row = 0)
-		i = 1
+
+		information = Tkinter.Text(self.slave, height = 10, width = 30, highlightthickness = 0)
+		information.grid(row = 1, padx = 10, pady = 5)
 		for n in info :
-			label = Tkinter.Label(self.slave, text = n.split(': ')[0], font = ("Helvetica", "14", 'bold'), anchor = 'center')
-			label.grid(row = i)
-			label = Tkinter.Label(self.slave, text = n.split(': ')[1], font = ("Helvetica", "12"), anchor = 'center')
-			label.grid(row = (i + 1))
-			i += 2
+			information.insert('end', n.split(': ')[0] + '\n')
+			information.insert('end', n.split(': ')[1] + '\r')
+
+		label = Tkinter.Label(self.slave, text="Version: Beta 0.9.1", font = ("Helvetica", "10"), anchor = 'center')
+		label.grid(row = 2)
+		label = Tkinter.Label(self.slave, text="Author: Ray H.", font = ("Helvetica", "10"), anchor = 'center')
+		label.grid(row = 3)
 
 	def run (self) :
 		self.__mainWindow()

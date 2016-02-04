@@ -13,11 +13,13 @@ PS：
 
 PS：
 优酷部分代码（function：__yk_e）参考自Youku m3u8 parser - lcz970（https://github.com/lcz970/Youku-m3u8-php）
+图标，我就是随意搜索了一个，也无法得知作者是谁，so，暂时借用一下，如果涉及任何问题，随时更换。
 
 ## 2.04.2016 更新
 加入bilibili，acfun支持
 小范围分享了一下，发现A站B展需求比较广泛。。。。。
 好吧。加上了。。。。
+同时，更新Win的exe&Mac的app，并加入Linux版的standalone执行文件。
 
 ## 2.03.2016 更新
 添加了个下载功能，抓取到原视频链接后，可以一键下载所有视频，暂存到桌面Video－Downloader文件夹中。
