@@ -54,7 +54,7 @@ class ChaseBilibili :
 					if 'backup_url' in item :
 						url.append(item['backup_url'][0])
 					else :
-						url.append(item['backup_url'][0])
+						url.append(item['url'])
 				elif self.videoType == 'h' :
 					if 'backup_url' in item :
 						if len(item['backup_url']) > 1:
@@ -62,7 +62,7 @@ class ChaseBilibili :
 						else :
 							url.append(item['backup_url'][0])
 					else :
-						url.append(item['backup_url'][0])
+						url.append(item['url'])
 				elif self.videoType == 'n' :
 					url.append(item['url'])
 
