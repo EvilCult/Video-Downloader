@@ -24,7 +24,11 @@ class FileProcesser :
 	def __downloadFile (self) :
 		self.fileID = 1
 		for url in self.fileUrl:
-			target = urllib.urlopen(url)
+			try:
+				target = urllib.urlopen(url)
+			except Exception, e:
+				self.process = "下载失败"
+				exit(127)
 			header = str(target.info()).split('\n')
 			for x in header :
 				if x[0:12] == 'Content-Type' :
@@ -36,7 +40,11 @@ class FileProcesser :
 				self.fileType = '.mp4'
 			else :
 				self.fileType = '.mp4'		
-			urllib.urlretrieve(url, self.savePath + '/' + self.saveName + '_' + str(self.fileID) + self.fileType, reporthook = self.__report)
+			try:
+				urllib.urlretrieve(url, self.savePath + '/' + self.saveName + '_' + str(self.fileID) + self.fileType, reporthook = self.__report)
+			except Exception, e:
+				self.process = "下载失败"
+				exit(127)
 			self.fileID += 1
 		self.process = '下载完成'
 
