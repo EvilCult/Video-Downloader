@@ -12,20 +12,24 @@ class Tools :
 	def getPage (self, url, requestHeader = []) :
 		resultFormate = StringIO.StringIO()
 
-		curl = pycurl.Curl()
-		curl.setopt(pycurl.URL, url.strip())
-		curl.setopt(pycurl.ENCODING, 'gzip,deflate')
-		curl.setopt(pycurl.HEADER, 1)
-		curl.setopt(pycurl.TIMEOUT, 10)
-		if len(requestHeader) > 0 :
-			curl.setopt(pycurl.HTTPHEADER, requestHeader)
-		curl.setopt(pycurl.WRITEFUNCTION, resultFormate.write)
-		curl.perform()
-		headerSize = curl.getinfo(pycurl.HEADER_SIZE)
-		curl.close()
+		try:
+			curl = pycurl.Curl()
+			curl.setopt(pycurl.URL, url.strip())
+			curl.setopt(pycurl.ENCODING, 'gzip,deflate')
+			curl.setopt(pycurl.HEADER, 1)
+			curl.setopt(pycurl.TIMEOUT, 10)
+			if len(requestHeader) > 0 :
+				curl.setopt(pycurl.HTTPHEADER, requestHeader)
+			curl.setopt(pycurl.WRITEFUNCTION, resultFormate.write)
+			curl.perform()
+			headerSize = curl.getinfo(pycurl.HEADER_SIZE)
+			curl.close()
 
-		header = resultFormate.getvalue()[0 : headerSize].split('\r\n')
-		body = resultFormate.getvalue()[headerSize : ]
+			header = resultFormate.getvalue()[0 : headerSize].split('\r\n')
+			body = resultFormate.getvalue()[headerSize : ]
+		except Exception, e:
+			header = ''
+			body = ''
 
 		return header, body
 

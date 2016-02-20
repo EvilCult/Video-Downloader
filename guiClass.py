@@ -12,6 +12,7 @@ from Module import sohuClass
 from Module import letvClass
 from Module import bilibiliClass
 from Module import acfunClass
+from Module import iqiyiClass
 from Library import fileProcesserClass
 
 class GUI :
@@ -93,6 +94,8 @@ class GUI :
 			getClass = bilibiliClass.ChaseBilibili()
 		elif 'acfun' in url :
 			getClass = acfunClass.ChaseAcfun()
+		elif 'iqiyi' in url :
+			getClass = iqiyiClass.ChaseIqiyi()
 		else :
 			result = False
 
