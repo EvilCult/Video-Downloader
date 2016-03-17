@@ -28,7 +28,7 @@ class ChaseLetv :
 			if fileUrl != False :
 				fileUrl = self.__getFile(fileUrl)
 				if fileUrl != '' > 0:
-					result['msg'] = fileUrl
+					result['msg'] = [fileUrl]
 				else:
 					result['stat'] = 1
 			else :
@@ -58,6 +58,7 @@ class ChaseLetv :
 
 	def __getVideoFileUrl (self, confgFileUrl) :
 		pageHeader, pageBody = self.Tools.getPage(confgFileUrl)
+
 		info = json.JSONDecoder().decode(pageBody)
 		# url = str(info['playurl']['domain'][0]) + str(info['playurl']['dispatch'][self.videoTypeList[self.videoType]][0]) + '&format=1&sign=letv&expect=3000&rateid=' + self.videoTypeList[self.videoType]
 		url = str(info['playurl']['domain'][0]) + str(info['playurl']['dispatch'][self.videoTypeList[self.videoType]][0])

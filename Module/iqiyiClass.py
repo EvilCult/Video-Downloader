@@ -108,7 +108,9 @@ class ChaseIqiyi :
 
 	def  __formatList (self, data):
 		result = []
+		temp = []
 		listContent = re.findall(r"(http:\/\/.*)", data)
+		listContent.append('xxx')
 		last = listContent[0]
 		for x in listContent:
 			if x.split('start=')[0] != last.split('start=')[0] :
@@ -116,9 +118,20 @@ class ChaseIqiyi :
 				url = reg.sub('start=0', last)
 				reg = re.compile('&contentlength=\d*')
 				url = reg.sub('', url)
-				result.append(url)
+				temp.append(url)
 			last = x
-
+		for x in temp:
+			reg = re.compile('end=(\d*)')
+			length = reg.findall(x)[0]
+			if int(length) > 40000000 :
+				reg = re.compile('end=\d*')
+				url = reg.sub('end=40000000', x)
+				result.append(url)
+				reg = re.compile('start=\d*')
+				url = reg.sub('start=40000000', x)
+				result.append(url)
+			else :
+				result.append(x)
 		return result
 
 	def __getKeyList(self, videoID) :

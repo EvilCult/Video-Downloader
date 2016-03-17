@@ -165,7 +165,8 @@ class GUI :
 
 		info = [
 			'Support: www.youku.com\nwww.tudou.com\ntv.sohu.com\nwww.letv.com\nwww.bilibili.com\nwww.acfun.tv',
-			'Website: https://github.com/EvilCult/Video-Downloader'
+			'Website: https://github.com/EvilCult/Video-Downloader',
+			'Special Thanks: bunnyswe(https://github.com/bunnyswe)\nliuyug(https://github.com/liuyug)'
 		]
 
 		label = Tkinter.Label(self.slave, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
