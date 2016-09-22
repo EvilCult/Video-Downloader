@@ -11,7 +11,7 @@ class ChaseBilibili :
 
 	def __init__ (self) :
 		self.videoLink     = ''
-		self.fileUrlPrefix = 'http://interface.bilibili.com/playurl?player=2&sign=5b790eb0d593597d1964425c4d9691df&otype=json'
+		self.fileUrlPrefix = 'http://www.bilibili.com/m/html5'
 
 		self.videoTypeList = {'n': '2', 'h': '1', 's': '0'}
 		self.videoType     = 's'
@@ -19,12 +19,12 @@ class ChaseBilibili :
 
 	def chaseUrl (self) :
 		result = {'stat': 0, 'msg': ''}
-		videoID = self.__getVideoID(self.videoLink)
+		videoInfo = self.__getVideoID(self.videoLink)
 
-		if videoID :
-			confgFileUrl = self.fileUrlPrefix + '&cid=' + str(videoID) + '&ts=' + str(int(time.time()))
+		if videoInfo['videoID'] :
+			confgFileUrl = self.fileUrlPrefix + '?aid=' + str(videoInfo['videoID']) + '&page=' + str(videoInfo['page'])
 			fileUrl = self.__getFile(confgFileUrl)
-			if fileUrl != '' > 0:
+			if fileUrl != '':
 				result['msg'] = fileUrl
 			else:
 				result['stat'] = 1
@@ -34,37 +34,30 @@ class ChaseBilibili :
 		return result
 
 	def __getVideoID (self, link) :
-		pageHeader, pageBody = self.Tools.getPage(link)
-		result = re.findall(r"cid=(\d*)", pageBody)
+		result = re.findall(r"/av(\d*)", link)
 		if len(result) > 0 :
 			videoID = result[0]
 		else :
 			videoID = False
 
-		return videoID
+		result = re.findall(r"/index_(\d*)\.html", link)
+		if len(result) > 0 :
+			page = result[0]
+		else :
+			page = 1
+
+		result = {
+			'videoID': videoID,
+			'page': page
+		}
+
+		return result
 
 	def __getFile (self, confgFileUrl) :
 		pageHeader, pageBody = self.Tools.getPage(confgFileUrl)
 		info = json.JSONDecoder().decode(pageBody)
 
-		url = []
-		if 'durl' in info :
-			for item in info['durl']:
-				if self.videoType == 's' :
-					if 'backup_url' in item :
-						url.append(item['backup_url'][0])
-					else :
-						url.append(item['url'])
-				elif self.videoType == 'h' :
-					if 'backup_url' in item :
-						if len(item['backup_url']) > 1:
-							url.append(item['backup_url'][1])
-						else :
-							url.append(item['backup_url'][0])
-					else :
-						url.append(item['url'])
-				elif self.videoType == 'n' :
-					url.append(item['url'])
+		url = [info['src']]
 
 		return url
 
