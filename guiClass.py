@@ -88,8 +88,11 @@ class GUI :
 			getClass = sohuClass.ChaseSohu()
 		elif 'letv' in url :
 			getClass = letvClass.ChaseLetv()
-		elif 'tudou' in url and 'acfun' not in url :
+		elif 'tudou' in url :
 			getClass = tudouClass.ChaseTudou()
+			getClass.videoLink = url
+			url = getClass.chaseUrl()
+			getClass = youkuClass.ChaseYouku()
 		elif 'bilibili' in url :
 			getClass = bilibiliClass.ChaseBilibili()
 		elif 'acfun' in url :
