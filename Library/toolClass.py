@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import pycurl
 import StringIO
+import random
 
 
 class Tools :
@@ -12,14 +13,19 @@ class Tools :
 	def getPage (self, url, requestHeader = []) :
 		resultFormate = StringIO.StringIO()
 
+		fakeIp = self.fakeIp()
+		requestHeader.append('CLIENT-IP:' + fakeIp)
+		requestHeader.append('X-FORWARDED-FOR:' + fakeIp)
+
 		try:
 			curl = pycurl.Curl()
 			curl.setopt(pycurl.URL, url.strip())
 			curl.setopt(pycurl.ENCODING, 'gzip,deflate')
 			curl.setopt(pycurl.HEADER, 1)
-			curl.setopt(pycurl.TIMEOUT, 10)
-			if len(requestHeader) > 0 :
-				curl.setopt(pycurl.HTTPHEADER, requestHeader)
+			curl.setopt(pycurl.TIMEOUT, 120)
+			curl.setopt(pycurl.SSL_VERIFYPEER, 0)   
+			curl.setopt(pycurl.SSL_VERIFYHOST, 0)
+			curl.setopt(pycurl.HTTPHEADER, requestHeader)
 			curl.setopt(pycurl.WRITEFUNCTION, resultFormate.write)
 			curl.perform()
 			headerSize = curl.getinfo(pycurl.HEADER_SIZE)
@@ -32,6 +38,16 @@ class Tools :
 			body = ''
 
 		return header, body
+
+	def fakeIp (self) :
+		fakeIpList = []
+
+		for x in xrange(0, 4):
+			fakeIpList.append(str(int(random.uniform(0, 255))))
+
+		fakeIp = '.'.join(fakeIpList)
+
+		return fakeIp
 
 	def xor (self, x, y, base = 32) :
 		stat = True
