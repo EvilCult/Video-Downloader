@@ -6,6 +6,7 @@ import tkMessageBox
 import os
 import sys
 import threading
+import webbrowser
 from Module import youkuClass
 from Module import tudouClass
 from Module import sohuClass
@@ -14,13 +15,18 @@ from Module import bilibiliClass
 from Module import acfunClass
 from Module import iqiyiClass
 from Library import fileProcesserClass
+from Library import updateClass
 
 class GUI :
 
 	def __init__ (self) :
 		self.masterTitle = 'Video Downloader'
-		self.slaveTitle = 'Info'
 		self.fileList = []
+		self.version = ''
+		self.appVer = ''
+		self.appUrl = ''
+		self.gitUrl = ''
+		self.feedUrl = ''
 
 	def __mainWindow (self) :
 		self.master = Tkinter.Tk();
@@ -34,10 +40,21 @@ class GUI :
 	def __menu (self) :
 		menubar = Tkinter.Menu(self.master)
 
-		filemenu = Tkinter.Menu(menubar, tearoff = 0)
-		filemenu.add_command(label = "Info", command = self.__showInfo)
-		filemenu.add_command(label = "Quit", command = self.master.quit)
-		menubar.add_cascade(label = "About", menu = filemenu)
+		fileMenu = Tkinter.Menu(menubar, tearoff = 0)
+		fileMenu.add_command(label = "Close", command = self.master.quit)
+		menubar.add_cascade(label = "File", menu = fileMenu)
+
+		aboutMenu = Tkinter.Menu(menubar, tearoff = 0)
+		aboutMenu.add_command(label = "Info", command = self.__showInfo)
+		aboutMenu.add_command(label = "Check Update", command = self.__chkUpdate)
+		menubar.add_cascade(label = "About", menu = aboutMenu)
+
+		helpMenu = Tkinter.Menu(menubar, tearoff = 0)
+		helpMenu.add_command(label = "GitHub", command = lambda target = self.gitUrl : webbrowser.open_new(target))
+		helpMenu.add_command(label = "Release Notes", command = lambda target = self.appUrl : webbrowser.open_new(target))
+		helpMenu.add_command(label = "Send Feedback", command = lambda target = self.feedUrl : webbrowser.open_new(target))
+		menubar.add_cascade(label = "Help", menu = helpMenu)
+
 
 		self.master.config(menu = menubar)
 
@@ -52,7 +69,6 @@ class GUI :
 		s.grid(row = 0, column = 1)
 
 		self.__searchBtn()
-
 
 	def __selector (self, position) :
 		self.selectorVal = Tkinter.StringVar()
@@ -159,32 +175,58 @@ class GUI :
 			self.sBtn = Tkinter.Button(self.mainTop, text = '分析中...', width = 10, command = '')
 			self.sBtn.grid(row = 0, column = 2)
 
-
 	def __showInfo(self):
 		self.slave = Tkinter.Tk();
 
-		self.slave.title(self.slaveTitle)
+		self.slave.title('Info')
 		self.slave.resizable(width = 'false', height = 'false')
 
 		info = [
 			'Support: www.youku.com\nwww.tudou.com\ntv.sohu.com\nwww.letv.com\nwww.bilibili.com\nwww.acfun.tv',
-			'Website: https://github.com/EvilCult/Video-Downloader',
+			'Website: http://evilcult.github.io/Video-Downloader/',
 			'Special Thanks: bunnyswe(https://github.com/bunnyswe)\nliuyug(https://github.com/liuyug)'
 		]
 
 		label = Tkinter.Label(self.slave, text="Video Downloader", font = ("Helvetica", "16", 'bold'), anchor = 'center')
-		label.grid(row = 0)
+		label.grid(row = 0, pady = 10)
 
-		information = Tkinter.Text(self.slave, height = 10, width = 30, highlightthickness = 0)
+		information = Tkinter.Text(self.slave, height = 10, width = 50, highlightthickness = 0, font = ("Helvetica", "14"))
 		information.grid(row = 1, padx = 10, pady = 5)
 		for n in info :
 			information.insert('end', n.split(': ')[0] + '\n')
 			information.insert('end', n.split(': ')[1] + '\r')
 
-		label = Tkinter.Label(self.slave, text="Version: Beta 0.9.1", font = ("Helvetica", "10"), anchor = 'center')
+		label = Tkinter.Label(self.slave, text="Version: " + self.version, font = ("Helvetica", "12"), anchor = 'center')
 		label.grid(row = 2)
-		label = Tkinter.Label(self.slave, text="Author: Ray H.", font = ("Helvetica", "10"), anchor = 'center')
+		label = Tkinter.Label(self.slave, text="Author: Ray H.", font = ("Helvetica", "12"), anchor = 'center')
 		label.grid(row = 3)
+
+	def __chkUpdate(self):
+		Updater = updateClass.Update()
+
+		info = Updater.check(self.appVer)
+
+		self.slave = Tkinter.Tk();
+
+		self.slave.title('Update')
+		self.slave.resizable(width = 'false', height = 'false')
+
+		if info['update'] == True :
+			label = Tkinter.Label(self.slave, text = info['version'], font = ("Helvetica", "16", 'bold'), anchor = 'center')
+			label.grid(row = 0, pady = 10)
+
+			information = Tkinter.Text(self.slave, height = 10, width = 60, highlightthickness = 0, font = ("Helvetica", "14"))
+			information.grid(row = 1, padx = 10, pady = 5)
+			information.insert('end', info['msg']);
+
+			btn = Tkinter.Button(self.slave, text = 'Download', width = 10, command = lambda target = self.appUrl : webbrowser.open_new(target))
+			btn.grid(row = 2, pady = 10)
+		else :
+			label = Tkinter.Label(self.slave, text = self.version, font = ("Helvetica", "16", 'bold'), anchor = 'center')
+			label.grid(row = 0, pady = 10)
+
+			label = Tkinter.Label(self.slave, height = 3, width = 60, text = info['msg'], font = ("Helvetica", "14"), anchor = 'center')
+			label.grid(row = 1, pady = 10)
 
 	def run (self) :
 		self.__mainWindow()
