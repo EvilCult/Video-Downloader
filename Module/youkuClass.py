@@ -7,6 +7,7 @@ import urllib
 import re
 import time
 from Library import toolClass
+from Library import errMsgClass
 
 class ChaseYouku :
 
@@ -18,20 +19,28 @@ class ChaseYouku :
 		self.videoType     = 's'
 		self.Tools         = toolClass.Tools()
 		self.now           = int(time.time())
+		self.err           = errMsgClass.ErrMsg()
 
 	def chaseUrl (self) :
-		result = {'stat': 0, 'msg': ''}
+		result = {'stat': 1, 'msg': ''}
 		videoID = self.__getVideoID(self.videoLink)
 		if videoID :
 			info = self.__getVideoInfo(videoID)
-			fileUrl = self.__getVideoFileUrl(info)
-			listFile = self.__getFileList(fileUrl)
-			if len(listFile) > 0:
-				result['msg'] = listFile
-			else:
-				result['stat'] = 1
+			if info != False :
+				fileUrl = self.__getVideoFileUrl(info)
+				if fileUrl != False :
+					listFile = self.__getFileList(fileUrl)
+					if len(listFile) > 0:
+						result['stat'] = 0
+						result['msg'] = listFile
+					else :
+						result['msg'] = self.err.show(2)
+				else :
+					result['msg'] = self.err.show(4)
+			else :
+				result['msg'] = self.err.show(3)
 		else :
-			result['stat'] = 2
+			result['msg'] = self.err.show(1)
 
 		return result
 
@@ -49,7 +58,12 @@ class ChaseYouku :
 		return videoID
 
 	def __getVideoInfo (self, videoID) :
-		pageHeader, pageBody = self.Tools.getPage(self.infoUrl + videoID, ['Referer:http://c-h5.youku.com/'])
+		try:
+			pageHeader, pageBody = self.Tools.getPage(self.infoUrl + videoID, ['Referer:http://c-h5.youku.com/'])
+			if pageBody == '' :
+				pageBody = False
+		except:
+			pageBody = False
 
 		return pageBody
 			
@@ -70,8 +84,11 @@ class ChaseYouku :
 
 			typeInfo = self.__getTypeCode(self.videoTypeList[self.videoType], videoInfo['data']['stream'])
 
-			ep    = urllib.quote(base64.encodestring(self.__rc4('bf7e5f01', str(sid) + '_' + str(typeInfo['videoTypeCode']) + '_' + str(token))), '')
-			fileUrl = self.fileUrlPrefix + '&ep=' + str(ep) + '&oip=' + str(oip) + '&sid=' + str(sid) + '&token=' + str(token) + '&vid=' + str(vid) + '&type=' + typeInfo['videoType'] + '&ts=' + str(self.now)
+			if typeInfo['videoTypeCode'] != '' :
+				ep = urllib.quote(base64.encodestring(self.__rc4('bf7e5f01', str(sid) + '_' + str(typeInfo['videoTypeCode']) + '_' + str(token))), '')
+				fileUrl = self.fileUrlPrefix + '&ep=' + str(ep) + '&oip=' + str(oip) + '&sid=' + str(sid) + '&token=' + str(token) + '&vid=' + str(vid) + '&type=' + typeInfo['videoType'] + '&ts=' + str(self.now)
+			else :
+				fileUrl = False
 		else :
 			fileUrl = False
 
@@ -92,6 +109,7 @@ class ChaseYouku :
 		return result
 
 	def __getTypeCode (self, videoType, data) :
+		typeCode = ''
 		for info in data :
 			if info['stream_type'] == videoType :
 				typeCode = info['segs'][-1]['fileid']

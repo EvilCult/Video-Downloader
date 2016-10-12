@@ -3,6 +3,7 @@
 import re
 import json
 from Library import toolClass
+from Library import errMsgClass
 
 class ChaseSohu :
 
@@ -14,9 +15,10 @@ class ChaseSohu :
 		self.videoTypeList = {'n': 'nor', 'h': 'hig', 's': 'sup'}
 		self.videoType     = 's'
 		self.Tools         = toolClass.Tools()
+		self.err           = errMsgClass.ErrMsg()
 
 	def chaseUrl (self) :
-		result = {'stat': 0, 'msg': ''}
+		result = {'stat': 1, 'msg': ''}
 		videoID = self.__getVideoID(self.videoLink)
 
 		if videoID :
@@ -25,13 +27,14 @@ class ChaseSohu :
 			if fileUrl != False :
 				listFile = self.__getFileList(fileUrl)
 				if len(listFile) > 0:
+					result['stat'] = 0
 					result['msg'] = listFile
 				else:
-					result['stat'] = 1
+					result['msg'] = self.err.show(2)					
 			else :
-				result['stat'] = 1
+				result['msg'] = self.err.show(3)
 		else :
-			result['stat'] = 2
+			result['msg'] = self.err.show(1)
 
 		return result
 

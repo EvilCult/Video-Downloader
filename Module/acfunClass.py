@@ -6,6 +6,7 @@ import base64
 import urllib
 import re
 from Library import toolClass
+from Library import errMsgClass
 
 class ChaseAcfun :
 
@@ -21,22 +22,33 @@ class ChaseAcfun :
 		self.videoType     = 's'
 		self.tempCookie    = ''
 		self.Tools         = toolClass.Tools()
+		self.err           = errMsgClass.ErrMsg()
 
 	def chaseUrl (self) :
-		result = {'stat': 0, 'msg': ''}
+		result = {'stat': 1, 'msg': ''}
 		videoID = self.__getVideoID(self.videoLink)
 
 		if videoID :
 			info = self.__getVideoInfo(videoID)
-			sourceInfo = self.__getSourceInfo(info)
-			fileUrl = self.__getVideoFileUrl(sourceInfo)
-			listFile = self.__getFileList(fileUrl)
-			if len(listFile) > 0:
-				result['msg'] = listFile
-			else:
-				result['stat'] = 1
+			if info != False:
+				sourceInfo = self.__getSourceInfo(info)
+				if sourceInfo != False:
+					fileUrl = self.__getVideoFileUrl(sourceInfo)
+					if fileUrl != False :
+						listFile = self.__getFileList(fileUrl)
+						if len(listFile) > 0:
+							result['stat'] = 0
+							result['msg'] = listFile
+						else:
+							result['msg'] = self.err.show(2)
+					else :
+						result['msg'] = self.err.show(4)
+				else :
+					result['msg'] = self.err.show(3)
+			else :
+				result['msg'] = self.err.show(3)
 		else :
-			result['stat'] = 2
+			result['msg'] = self.err.show(1)
 
 		return result
 
@@ -64,9 +76,11 @@ class ChaseAcfun :
 		return videoID
 
 	def __getVideoInfo (self, videoID) :
-		pageHeader, pageBody = self.Tools.getPage(self.infoUrl + str(videoID), ['deviceType:2', 'User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'])
-
-		videoInfo = json.JSONDecoder().decode(pageBody)
+		try:
+			pageHeader, pageBody = self.Tools.getPage(self.infoUrl + str(videoID), ['deviceType:2', 'User-Agent:Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'])
+			videoInfo = json.JSONDecoder().decode(pageBody)
+		except:
+			videoInfo = False
 
 		return videoInfo
 			

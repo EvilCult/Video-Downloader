@@ -10,14 +10,18 @@ class FileProcesser :
 
 	def __init__ (self) :
 		self.fileUrl = ''
-		self.savePath = self.__makeSavePath()
 		self.ua = 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1'
 		self.saveName = ''
 		self.fileID = 0
 		self.process = ''
 		self.chunk = 4096
 
-	def download (self, url) :
+	def download (self, url, savePath = '') :
+		if savePath != '' :
+			self.savePath = savePath
+		else :
+			self.savePath = self.__makeSavePath()
+
 		self.process = '准备中...'
 		self.fileUrl = url
 		self.saveName = time.strftime("%Y%m%d%H%M%S")

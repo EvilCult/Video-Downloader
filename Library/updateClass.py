@@ -15,7 +15,7 @@ class Update :
 		}
 		server = self.__getServerInfo()
 		if server != False :
-			if appVer < server['appVer'] :
+			if float(appVer) < float(server['appVer']) :
 				result['update'] = True
 				result['version'] = server['version']
 				result['msg'] = server['info']
