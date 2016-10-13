@@ -1,1 +1,2 @@
-pycurl>=7.21.5
+python == 2.7
+pycurl >= 7.21.5
