@@ -4,6 +4,7 @@ import json
 import time
 import math
 import re
+import hashlib
 from Library import toolClass
 
 class ChaseIqiyi :
@@ -13,25 +14,26 @@ class ChaseIqiyi :
 		self.infoUrl       = 'http://cache.m.iqiyi.com/jp/tmts/'
 		self.infoUrlSuffix = '/?uid=&cupid=qc_100001_100103&platForm=h5&src=f45bc84a7ea643209b29a72b0c1e385f&qd_pwsz=MF8w&__jsT=sgve&type=m3u8'
 		self.fileUrlPrefix = ''
-		self.videoTypeList = {'n': '96', 'h': '1', 's': '2'}
+		self.videoTypeList = {'n': '96', 'h': '2', 's': '4'}
 		self.videoType     = 's'
 		self.tempCookie    = ''
 		self.Tools         = toolClass.Tools()
 
 	def chaseUrl (self) :
-		result = {'stat': 0, 'msg': ''}
+		result = {'stat': 1, 'msg': ''}
 		videoStrID, videoNumID = self.__getVideoID(self.videoLink)
+
 		if videoStrID and videoNumID :
-			securitykey = self.__auth(videoNumID)
-			info = self.__getVideoInfo(videoNumID, videoStrID, securitykey)
+			info = self.__getVideoInfo(str(videoNumID), str(videoStrID))
 			fileUrl = self.__getVideoFileUrl(info)
 			listFile = self.__getFileList(fileUrl)
 			if len(listFile) > 0:
+				result['stat'] = 0
 				result['msg'] = listFile
 			else:
-				result['stat'] = 1
+				result['msg'] = self.err.show(2)
 		else :
-			result['stat'] = 2
+			result['msg'] = self.err.show(1)
 
 		return result
 
@@ -52,39 +54,23 @@ class ChaseIqiyi :
 
 		return videoStrID, videoNumID
 
-	def __auth (self, videoID) :
-		p = [1732584193, -271733879, -1732584194, 271733878]
-		C = [1732584193, -271733879, -1732584194, 271733878]
-		rand = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21]
-		S = self.__getKeyList(videoID)
+	def __getVideoInfo(self, tvid, vid):
+		t = int(time.time() * 1000)
 
-		for s in xrange (0, 64) :
-			idx = [s, 5 * s + 1, 3 * s + 5, 7 * s][int(s/16)]  % 16
-			if idx < len(S) :
-				sRand = S[idx]
-			else :
-				sRand = 0
-			m = self.__joinArr(self.__joinArr(p[0], [p[1] & p[2] | ~p[1] & p[3], p[3] & p[1] | ~p[3] & p[2], p[1] ^ p[2] ^ p[3], p[2] ^ (p[1] | ~p[3])][self.Tools.rotate(s, 4, 'r')]), self.__joinArr(self.Tools.xor(int(abs(math.sin(s + 1)) * 4294967296), 0), sRand))
-			_ = rand[4 * int(s/16) + s % 4]
+		src = '76f90cbd92f94a2e925d83e8ccd22cb7'
+		key = 'd5fb4bd9d50c4be6948c97edd7254b0e'
+		sc = hashlib.new('md5', bytes(str(t) + key  + vid)).hexdigest()
+		requestUrl = 'http://cache.m.iqiyi.com/tmts/{0}/{1}/?t={2}&sc={3}&src={4}'.format(tvid,vid,t,sc,src)
 
-			p = [p[3], self.__joinArr(p[1], self.Tools.rotate(m, _, 'l') | self.Tools.rotate(m, 32 - _, 'r+')), p[1], p[2]]
-
-		temp = []
-		for x in xrange(0, 4):
-			temp.append(self.__joinArr(p[x], C[x]))
-		C = temp
-
-		sc = ''
-		for s in xrange(0,32):
-			sc += hex(self.Tools.rotate(C[self.Tools.rotate(s, 1 * 3, 'r')], (self.Tools.xor(1, s) & 7) * 4, 'r') & 15)[2:]
-
-		return sc
-
-	def __getVideoInfo (self, videoNumID, videoStrID, securitykey) :
-		requestUrl = self.infoUrl + videoNumID + '/' + videoStrID + self.infoUrlSuffix +'&qypid=' + videoNumID + '_21&sc=' + securitykey + '&t=' + self.now
 		pageHeader, pageBody = self.Tools.getPage(requestUrl)
 
 		return pageBody.replace('var tvInfoJs=', '')
+
+	# def __getVideoInfo (self, videoNumID, videoStrID, securitykey) :
+	# 	requestUrl = self.infoUrl + videoNumID + '/' + videoStrID + self.infoUrlSuffix +'&qypid=' + videoNumID + '_21&sc=' + securitykey + '&t=' + self.now
+	# 	pageHeader, pageBody = self.Tools.getPage(requestUrl)
+
+	# 	return pageBody.replace('var tvInfoJs=', '')
 			
 	def __getVideoFileUrl (self, videoInfo) :
 		videoInfo = json.JSONDecoder().decode(videoInfo)
@@ -137,6 +123,7 @@ class ChaseIqiyi :
 	def __getKeyList(self, videoID) :
 		self.now = time.time()
 		self.now = str(self.now).split(".")[0] + '666'
+		self.now = '1476419786014'
 		S = {}
 
 		for s in xrange(0, 13):
