@@ -288,7 +288,7 @@ class GUI :
 			information.grid(row = 1, padx = 10, pady = 5)
 			information.insert('end', info['msg']);
 
-			btn = Tkinter.Button(self.slave, text = 'Download', width = 10, command = lambda target = self.appUrl : webbrowser.open_new(target))
+			btn = Tkinter.Button(self.slave, text = 'Download', width = 10, command = lambda target = info['dUrl'] : webbrowser.open_new(target))
 			btn.grid(row = 2, pady = 10)
 		else :
 			label = Tkinter.Label(self.slave, text = self.version, font = ("Helvetica", "16", 'bold'), anchor = 'center')
@@ -331,7 +331,7 @@ class GUI :
 				information.grid(row = 1, padx = 10, pady = 5)
 				information.insert('end', info['msg']);
 
-				btn = Tkinter.Button(self.slave, text = 'Download', width = 10, command = lambda target = self.appUrl : webbrowser.open_new(target))
+				btn = Tkinter.Button(self.slave, text = 'Download', width = 10, command = lambda target = info['dUrl'] : webbrowser.open_new(target))
 				btn.grid(row = 2, pady = 10)
 
 	def run (self) :

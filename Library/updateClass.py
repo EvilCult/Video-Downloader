@@ -19,6 +19,7 @@ class Update :
 				result['update'] = True
 				result['version'] = server['version']
 				result['msg'] = server['info']
+				result['dUrl'] = server['dUrl']
 		else :
 			result['msg'] = '网络故障，请稍后再试(Github和GFW的问题你懂的)'
 
