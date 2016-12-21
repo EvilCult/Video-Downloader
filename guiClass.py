@@ -188,7 +188,7 @@ class GUI :
 		self.slave.resizable(width = 'false', height = 'false')
 
 		info = [
-			'Support: www.youku.com\nwww.tudou.com\ntv.sohu.com\nwww.letv.com\nwww.bilibili.com\nwww.acfun.tv',
+			'Support: www.youku.com\nwww.tudou.com\ntv.sohu.com\nwww.letv.com\nwww.bilibili.com\nwww.acfun.tv\nwww.iqiyi.com',
 			'Website: http://evilcult.github.io/Video-Downloader/',
 			'Special Thanks: bunnyswe(https://github.com/bunnyswe)\nliuyug(https://github.com/liuyug)'
 		]
