@@ -62,14 +62,21 @@ class ChaseBilibili :
 
 	def __getVideoInfo (self, confgFileUrl) :
 		try:
-			pageHeader, pageBody = self.Tools.getPage(confgFileUrl)
+			header = [
+				'Upgrade-Insecure-Requests:1',
+				'Host:api.bilibili.com',
+				'Cookie:fts=1498210550; buvid3=93527474-846C-4F2C-88C2-91B1CD53F6A524143infoc; rpdid=kxmkxxxqsqdoplqiowxqw',
+			]
+			pageHeader, pageBody = self.Tools.getPage(confgFileUrl, header)
 			info = json.JSONDecoder().decode(pageBody)
 
 			urlList = [
 				info['durl'][0]['url']
 			]
-			for x in xrange(0, len(info['durl'][0]['backup_url'])):
-				urlList.append(info['durl'][0]['backup_url'][x])
+
+			if 'backup_url' in info['durl'][0]:
+				for x in xrange(0, len(info['durl'][0]['backup_url'])):
+					urlList.append(info['durl'][0]['backup_url'][x])
 
 			if int(self.videoTypeList[self.videoType]) <= len(urlList) - 1 :
 				url = urlList[int(self.videoTypeList[self.videoType])]
